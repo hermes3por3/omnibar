@@ -1,0 +1,32 @@
+<!--  Options Panel  -->
+<!ENTITY omnibar.PrefsTitle "Preferencias de Omnibar">
+<!ENTITY omnibar.DefaultSearchDesc "Habilitar la búsqueda de solicitudes sin palabra clave ni operador de búsqueda">
+<!ENTITY omnibar.DefaultSearchDescContext "(Deshabilitar en caso de que otro complemento relacionado con barra de direcciones no funcione)">
+<!ENTITY omnibar.DisplayOptions "Opciones de visualización">
+<!ENTITY omnibar.OptDefaultSearchShow "Mostrar la opción de búsqueda predeterminada cuando no se usa el operador '@' o la palabra clave [mayor parpadeo en los resultados](*)">
+<!ENTITY omnibar.OptGotoShow "Mostrar la pista 'ir a' para direcciones probables">
+<!ENTITY omnibar.OptSuggestShow "Mostrar sugerencias para consultas y direcciones URL">
+<!ENTITY omnibar.OptNumSuggest "Número máximo de sugerencias mostradas">
+<!ENTITY omnibar.OptBarStyle "Seleccione un estilo para la lista de sugerencias(*):">
+<!ENTITY omnibar.OptNumVisibleResult "Número máximo de resultados visibles">
+<!ENTITY omnibar.HideName "Ocultar el nombre del motor de búsqueda">
+<!ENTITY omnibar.HideIcon "Ocultar el icono del motor de búsqueda">
+<!ENTITY omnibar.AutohideEngine "Ocultar automáticamente el motor de búsqueda">
+<!ENTITY omnibar.ShowInUrlbar "Mostrar el motor de búsqueda en la barra de direcciones">
+<!ENTITY omnibar.ffrestart "Requiere reiniciar Firefox para aplicar el cambio">
+<!ENTITY omnibar.STYLE.RICH "Detallado (predeterminado)">
+<!ENTITY omnibar.STYLE.RICHSLIM "Detallado y compacto">
+<!ENTITY omnibar.STYLE.SIMPLE "Compacto">
+<!ENTITY omnibar.LONG.DESC.STYLE.RICH "Estilo predeterminado de Firefox para mostrar las sugerencias, con resaltado.">
+<!ENTITY omnibar.LONG.DESC.STYLE.RICHSLIM "Igual que 'Detallado', pero se muestra de manera más compacta.">
+<!ENTITY omnibar.LONG.DESC.STYLE.SIMPLE "Los resultados se muestran en una lista muy sencilla y rápida sin resaltar la búsqueda.">
+<!ENTITY omnibar.prefmsg "Clic derecho en el icono del motor de búsqueda en la barra de direcciones para ver las preferencias de Omnibar.">
+<!ENTITY omnibar.HideSearchBar "Ocultar la barra de búsqueda (marcarlo si la caja de búsqueda no se oculta manualmente)">
+<!ENTITY omnibar.OptNumHistory "Número máximo de historial de resultados">
+<!ENTITY omnibar.SelectSearchOp "Seleccione el operador de búsqueda">
+<!--  common  -->
+<!ENTITY omnibar.Manage "Gestionar motores de búsqueda...">
+<!ENTITY omnibar.ShowSuggestions "Mostrar sugerencias">
+<!ENTITY omnibar.Done "Hecho">
+<!--  Context Menu  -->
+<!--  Autocomplete popup  -->

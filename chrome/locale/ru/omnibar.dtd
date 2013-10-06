@@ -1,0 +1,32 @@
+<!--  Options Panel  -->
+<!ENTITY omnibar.PrefsTitle "Настройки Omnibar">
+<!ENTITY omnibar.DefaultSearchDesc "Разрешить опускать в запросе краткое имя и оператор поиска">
+<!ENTITY omnibar.DefaultSearchDescContext "(можно отключить, если другие расширения для строки адреса не работают)">
+<!ENTITY omnibar.DisplayOptions "Вид">
+<!ENTITY omnibar.OptDefaultSearchShow "Show default search option when &apos;@&apos; operator or keyword is not used [results in increased flickr](*)">
+<!ENTITY omnibar.OptGotoShow "Show &apos;go to&apos; hint for probable urls">
+<!ENTITY omnibar.OptSuggestShow "Показывать предположения для адресов и поисковых запросов">
+<!ENTITY omnibar.OptNumSuggest "Максимальное число предположений">
+<!ENTITY omnibar.OptBarStyle "Вид списка предположений (*):">
+<!ENTITY omnibar.OptNumVisibleResult "Максимальное число видимых строк">
+<!ENTITY omnibar.HideName "Скрыть название">
+<!ENTITY omnibar.HideIcon "Скрыть значок">
+<!ENTITY omnibar.AutohideEngine "Автоматически скрывать">
+<!ENTITY omnibar.ShowInUrlbar "Отображение поискового плагина">
+<!ENTITY omnibar.ffrestart "Требуется перезагрузка браузера">
+<!ENTITY omnibar.STYLE.RICH "Полный (по умолчанию)">
+<!ENTITY omnibar.STYLE.RICHSLIM "Компактный">
+<!ENTITY omnibar.STYLE.SIMPLE "Упрощенный">
+<!ENTITY omnibar.LONG.DESC.STYLE.RICH "Используется браузером по умолчанию, есть подсветка поискового запроса">
+<!ENTITY omnibar.LONG.DESC.STYLE.RICHSLIM "То же, что и &apos;Полный&apos;, но всё в одну строку">
+<!ENTITY omnibar.LONG.DESC.STYLE.SIMPLE "Упрощенное представление, подсветка не используется">
+<!ENTITY omnibar.prefmsg "Щелкните правой кнопкой для просмотра настроек Omnibar">
+<!ENTITY omnibar.HideSearchBar "Hide search box (use it if search box is not hidden manually)">
+<!ENTITY omnibar.OptNumHistory "Maximum number of history results">
+<!ENTITY omnibar.SelectSearchOp "Select search operator">
+<!--  common  -->
+<!ENTITY omnibar.Manage "Manage Search Engines...">
+<!ENTITY omnibar.ShowSuggestions "Show suggestions">
+<!ENTITY omnibar.Done "Done">
+<!--  Context Menu  -->
+<!--  Autocomplete popup  -->

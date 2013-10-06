@@ -1,0 +1,32 @@
+<!--  Options Panel  -->
+<!ENTITY omnibar.PrefsTitle "Omnibar préférences">
+<!ENTITY omnibar.DefaultSearchDesc "Activer la recherche par défaut sans le signe '@'">
+<!ENTITY omnibar.DefaultSearchDescContext "(Désactivé si un autre module complémentaire similaire de barre d'adresse ne fonctionne pas">
+<!ENTITY omnibar.DisplayOptions "Afficher les options">
+<!ENTITY omnibar.OptDefaultSearchShow "Afficher les options de recherche par défaut lorsque que le signe '@' ou un mot-clef n'est pas utilisé [les résultats croissants flickr](*)">
+<!ENTITY omnibar.OptGotoShow "Afficher 'aller à' pour suggérer de probables URLs">
+<!ENTITY omnibar.OptSuggestShow "Afficher des suggestions pour les requêtes et les URLs">
+<!ENTITY omnibar.OptNumSuggest "Nombre maximum de propositions affichées">
+<!ENTITY omnibar.OptBarStyle "Choisir un style pour la liste de propositions(*):">
+<!ENTITY omnibar.OptNumVisibleResult "Nombre maximum de résultats affichés">
+<!ENTITY omnibar.HideName "Masquer le nom du moteur">
+<!ENTITY omnibar.HideIcon "Masquer l'icône du moteur">
+<!ENTITY omnibar.AutohideEngine "Masquer automatiquement le moteur de recherche">
+<!ENTITY omnibar.ShowInUrlbar "Afficher le moteur de recherche dans la barre d'adresse">
+<!ENTITY omnibar.ffrestart "Redémarrer Firefox pour prendre en compte les changements">
+<!ENTITY omnibar.STYLE.RICH "Riche (par défaut)">
+<!ENTITY omnibar.STYLE.RICHSLIM "Riche &amp; Fin">
+<!ENTITY omnibar.STYLE.SIMPLE "Fin">
+<!ENTITY omnibar.LONG.DESC.STYLE.RICH "Utiliser le style par défaut de Firefox pour afficher les suggestions avec les sur-lignages.">
+<!ENTITY omnibar.LONG.DESC.STYLE.RICHSLIM "Identique à 'Riche', mais utilise un affichage plus fin et plus compact.">
+<!ENTITY omnibar.LONG.DESC.STYLE.SIMPLE "Les résultats sont affichés dans une liste très simple et rapide sans sur-lignage des recherches.">
+<!ENTITY omnibar.prefmsg "Clic droit sur l'icône du moteur de recherche dans la barre d'adresse pour voir les préférences Omnibar">
+<!ENTITY omnibar.HideSearchBar "Masquer la boîte de recherche (si la boîte de recherche n'est pas masquée manuellement)">
+<!ENTITY omnibar.OptNumHistory "Nombre maximum de résultat pour l'historique">
+<!ENTITY omnibar.SelectSearchOp "Sélectionnez l'opérateur de recherche">
+<!--  common  -->
+<!ENTITY omnibar.Manage "Gérer les moteurs de recherche...">
+<!ENTITY omnibar.ShowSuggestions "Montrer des propositions">
+<!ENTITY omnibar.Done "C'est fait">
+<!--  Context Menu  -->
+<!--  Autocomplete popup  -->

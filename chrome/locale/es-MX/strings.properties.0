@@ -1,0 +1,8 @@
+extensions.omnibar@ajitk.com.description=Transforma la barra de localización en Omnibar.
+EmptyStringFiller=___
+DefaultSearchCommentFormat=busqueda $1 for $2
+UrlSuggestCommentFormat=sugerido url $1
+PhraseSuggestCommentFormat=busqueda $1 for $2
+TIP.OmnibarIcon=Click o Ctrl+(Up/Down/Mouse scroll) para cambiar motor de busqueda.\nClick derecho para ver las preferencias de omnibar.
+TIP.Search=Buscador
+ShowInUrlbar=Show Omnibar in Urlbar

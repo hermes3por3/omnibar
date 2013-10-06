@@ -1,0 +1,32 @@
+<!--  Options Panel  -->
+<!ENTITY omnibar.PrefsTitle "Omnibar beállítások">
+<!ENTITY omnibar.DefaultSearchDesc "Enable search for queries without search keyword or operator">
+<!ENTITY omnibar.DefaultSearchDescContext "(Disable in case other urlbar related addons don&apos;t work)">
+<!ENTITY omnibar.DisplayOptions "Megjelenítés beállítása">
+<!ENTITY omnibar.OptDefaultSearchShow "Show default search option when &apos;@&apos; operator or keyword is not used [results in increased flickr](*)">
+<!ENTITY omnibar.OptGotoShow "Show &apos;go to&apos; hint for probable urls">
+<!ENTITY omnibar.OptSuggestShow "Jelenítse meg a javaslatok a kifejezések és webcímek beírásakor">
+<!ENTITY omnibar.OptNumSuggest "Legfeljebb ennyi javaslat legyen látható">
+<!ENTITY omnibar.OptBarStyle "Válasszon stílust a javaslatok lista megjelenítéséhez(*):">
+<!ENTITY omnibar.OptNumVisibleResult "Legfeljebb ennyi eredmény legyen egyszerre látható a listában">
+<!ENTITY omnibar.HideName "Keresőmotor nevének elrejtése">
+<!ENTITY omnibar.HideIcon "Keresőmotor ikonjának elrejtése">
+<!ENTITY omnibar.AutohideEngine "Keresőmotor automatikus elrejtése">
+<!ENTITY omnibar.ShowInUrlbar "Keresőmotor megjelenítése a címsorban">
+<!ENTITY omnibar.ffrestart "A változás érvényesítéséhez újra kell indítani a Firefoxot">
+<!ENTITY omnibar.STYLE.RICH "Rich (Default)">
+<!ENTITY omnibar.STYLE.RICHSLIM "Rich &amp; Slim">
+<!ENTITY omnibar.STYLE.SIMPLE "Keskeny sor">
+<!ENTITY omnibar.LONG.DESC.STYLE.RICH "A Firefox alapértelmezett stílusát használja a javaslatok megjelenítésére (kiemeléssel együtt)">
+<!ENTITY omnibar.LONG.DESC.STYLE.RICHSLIM "Ugyanaz, mint a XXX, de keskenyebb és komplikáltabb.">
+<!ENTITY omnibar.LONG.DESC.STYLE.SIMPLE "Az eredmények egy nagyon egyszerű és gyors listában mindenféle kiemelés nélkül jelennek meg.">
+<!ENTITY omnibar.prefmsg "Az Omnibar beállításainak megtekintéséhez kattintson jobb egérgombbal a címsorban található Omnibar ikonra.">
+<!ENTITY omnibar.HideSearchBar "Keresősáv elrejtése (abban az esetben használja, ha Ön manuálisan még nem kapcsolta ki)">
+<!ENTITY omnibar.OptNumHistory "Maximum number of history results">
+<!ENTITY omnibar.SelectSearchOp "Select search operator">
+<!--  common  -->
+<!ENTITY omnibar.Manage "Keresőmotorok kezelése...">
+<!ENTITY omnibar.ShowSuggestions "Javaslatok megjelenítése">
+<!ENTITY omnibar.Done "Kész">
+<!--  Context Menu  -->
+<!--  Autocomplete popup  -->

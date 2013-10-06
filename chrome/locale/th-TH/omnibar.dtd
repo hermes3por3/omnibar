@@ -1,0 +1,32 @@
+<!--  Options Panel  -->
+<!ENTITY omnibar.PrefsTitle "การตั้งค่า Omnibar">
+<!ENTITY omnibar.DefaultSearchDesc "เปิดการค้นหาเริ่มต้นโดยไม่มีตัวปฏิบัติการเครื่องมือ  &apos;@&apos;">
+<!ENTITY omnibar.DefaultSearchDescContext "(ปิดการใช้ในกรณีที่ส่วนขยายแถบ url อื่นๆไม่ทำงาน)">
+<!ENTITY omnibar.DisplayOptions "ตัวเลือกการแสดงผล">
+<!ENTITY omnibar.OptDefaultSearchShow "แสดงตัวเลือกการค้นหาเริ่มต้นเมื่อไม่ใช้ตัวปฏิบัติการ &apos;@&apos; หรือคำค้น [ผลลัพธ์ใน flickr ที่เพิ่มขึ้น](*)">
+<!ENTITY omnibar.OptGotoShow "แสดงคำแนะนำ &apos;ไปยัง&apos; สำหรับ url ที่เป็นไปได้">
+<!ENTITY omnibar.OptSuggestShow "แสดงคำแนะนำสำหรับการร้องขอและ URL">
+<!ENTITY omnibar.OptNumSuggest "จำวนของคำแนะนำที่แสดงสูงสุด">
+<!ENTITY omnibar.OptBarStyle "เลือกรูปแบบสำหับรายการคำแนะนำ(*):">
+<!ENTITY omnibar.OptNumVisibleResult "จำนวนผลลัพธ์ที่แสดงสูงสุด">
+<!ENTITY omnibar.HideName "ซ่อนชื่อเครื่องมือ">
+<!ENTITY omnibar.HideIcon "ซ่อนไอคอนเครื่องมือ">
+<!ENTITY omnibar.AutohideEngine "ซ่อนเครื่องมือการค้นหาโดยอัตโนมัติ">
+<!ENTITY omnibar.ShowInUrlbar "แสดงเครื่องมือการค้นหาในแถบ URL">
+<!ENTITY omnibar.ffrestart "ต้องการให้เริ่ม Firefox ใหม่เพื่อนำการเปลี่ยนแปลงไปใช้">
+<!ENTITY omnibar.STYLE.RICH "อุดมสมบูรณ์ (เริ่มต้น)">
+<!ENTITY omnibar.STYLE.RICHSLIM "อุดมสมบูรณ์และเรียว">
+<!ENTITY omnibar.STYLE.SIMPLE "เรียว">
+<!ENTITY omnibar.LONG.DESC.STYLE.RICH "รูปแบบเริ่มต้นของ Firefox ในการแสดงคำแนะนำ โดยใช้การเน้น">
+<!ENTITY omnibar.LONG.DESC.STYLE.RICHSLIM "เหมือนกับ &apos;อุดมสมบูรณ์&apos; แต่ใช้การแสดงที่เรียวเล็กกว่าและประหยัดที่กว่า">
+<!ENTITY omnibar.LONG.DESC.STYLE.SIMPLE "ผลลัพธ์จะแสดงในรายการที่รวดเร็วและเรียบง่ายโดยไม่มีการเน้นคำค้น">
+<!ENTITY omnibar.prefmsg "คลิกขวาบนไอคอนเครื่องมือการค้นหาในแถบ URL เพื่อแสดงการตั้งค่า Omnibar">
+<!ENTITY omnibar.HideSearchBar "ซ่อนกล่องการค้นหา (ใช้หากกล่องค้นหาไม่ถูกซ่อนโดยตัวคุณเอง)">
+<!ENTITY omnibar.OptNumHistory "Maximum number of history results">
+<!ENTITY omnibar.SelectSearchOp "Select search operator">
+<!--  common  -->
+<!ENTITY omnibar.Manage "จัดการเครื่องมือการค้นหา...">
+<!ENTITY omnibar.ShowSuggestions "แสดงคำแนะนำ">
+<!ENTITY omnibar.Done "เสร็จสิ้น">
+<!--  Context Menu  -->
+<!--  Autocomplete popup  -->
