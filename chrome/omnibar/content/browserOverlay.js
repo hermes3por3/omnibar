@@ -459,17 +459,19 @@ var O = window.Omnibar = {
         var submission = firstEngine.getSubmission(search_str, null);
         
         if(openintab) {
-            gBrowser.loadOneTab(submission.uri.spec, null, null,
-                                submission.postData, false, true);
-            if(event) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
+          // Revert urlbar search text
+          gURLBar.handleRevert && gURLBar.handleRevert();
+          gBrowser.loadOneTab(submission.uri.spec, null, null,
+                              submission.postData, false, true);
+          if(event) {
+              event.preventDefault();
+              event.stopPropagation();
+          }
         } else {
-            openUILinkIn(submission.uri.spec,
-                       whereToOpenLink(event),
-                       null,
-                       submission.postData);
+          openUILinkIn(submission.uri.spec,
+                     whereToOpenLink(event),
+                     null,
+                     submission.postData);
         }
         
         ngins.forEach(function(e, i, arrey) {
