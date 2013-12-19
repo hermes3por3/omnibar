@@ -19,3 +19,4 @@ pref("extensions.omnibar.showinurlbar", true);
 pref("extensions.omnibar.searchdelay", 100);
 pref("extensions.omnibar.hostnames", "localhost,*.local");
 
+pref("extensions.omnibar.disableshowintab", true);

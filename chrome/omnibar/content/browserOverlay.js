@@ -28,7 +28,7 @@ var O = window.Omnibar = {
   _init: function() {
     // cache elements
     O._rlPopup = document.getElementById("PopupAutoCompleteRichResult");
-    var textbox = O._urlbar = document.getElementById("urlbar");
+    var urlbar = O._urlbar = document.getElementById("urlbar");
     O._imageElBox = document.getElementById("omnibar-defaultEngineBox");
     O._imageEl = document.getElementById("omnibar-defaultEngine");
 
@@ -51,14 +51,14 @@ var O = window.Omnibar = {
 
     // do other init related stuff
     if(!(O._defaultAutocompletesearch)) {
-      O._defaultAutocompletesearch = textbox.getAttribute('autocompletesearch');
+      O._defaultAutocompletesearch = urlbar.getAttribute('autocompletesearch');
     }
 	
 	// set version as an attribute for version spefic rules
 	document.getElementById("omnibar-in-urlbar").setAttribute('class', 'v'+Application.version.split('.')[0]);
 
     
-    textbox.addEventListener("keydown", function(e) {
+    urlbar.addEventListener("keydown", function(e) {
       if(e.ctrlKey) {
         switch (e.keyCode) {
           case e.DOM_VK_DOWN:
@@ -74,7 +74,7 @@ var O = window.Omnibar = {
         }
       }
     }, false)
-    textbox.addEventListener("DOMMouseScroll", function(e) {
+    urlbar.addEventListener("DOMMouseScroll", function(e) {
       if(e.ctrlKey) {
         O.changeEngine(e.detail > 0 ? 1 : -1);
         e.preventDefault();
@@ -295,8 +295,8 @@ var O = window.Omnibar = {
   _recheck: function() {
     // check we still have the auto-complete options setup.
     if(O._urlbar.getAttribute("autocompletesearch").indexOf("omnibar-") < 0) {
-      var textbox = O._urlbar;
-      O._defaultAutocompletesearch = textbox.getAttribute('autocompletesearch');
+      var urlbar = O._urlbar;
+      O._defaultAutocompletesearch = urlbar.getAttribute('autocompletesearch');
       O.enableSearchAutocomplete();
     }
   },
@@ -304,9 +304,9 @@ var O = window.Omnibar = {
    * adds options to urlbar for omni-bar autocompletes.
    */
   enableSearchAutocomplete: function() {
-    var textbox = O._urlbar;
+    var urlbar = O._urlbar;
     var autocompletesearch = O._defaultAutocompletesearch.replace("history", "") + " omnibar-allinone";
-    textbox.setAttribute('autocompletesearch', autocompletesearch);
+    urlbar.setAttribute('autocompletesearch', autocompletesearch);
   },
   get engines() {
     var engines = [];
@@ -360,11 +360,15 @@ var O = window.Omnibar = {
   applyPrefs: function() {
     var prefSvc = O._prefSvc;
     var prefs = O._prefs;
-    O._urlbar.setAttribute("ontextentered", "Omnibar._handleURLBarCommand(param);");
+    var urlbar = O._urlbar;
+
+    urlbar.setAttribute("ontextentered", "Omnibar._handleURLBarCommand(param);");
+    // Disable show in tab based on preference
+    urlbar.setAttribute('autocompletesearchparam',
+      prefs.getBoolPref('disableshowintab') ? '' : 'enable-actions');
     setTimeout(O.setEngineIcon, 100);
     O.enableSearchAutocomplete();
-    var textbox = O._urlbar, prefs = O._prefs;
-    textbox.setAttribute("maxrows", prefs.getIntPref("numresults")+"");
+    urlbar.setAttribute("maxrows", prefs.getIntPref("numresults")+"");
     prefSvc.setIntPref("browser.urlbar.maxRichResults",
                        Math.max(prefs.getIntPref('numresults'), prefSvc.getIntPref('browser.urlbar.maxRichResults')));
 
@@ -377,12 +381,12 @@ var O = window.Omnibar = {
 
     var popupStyle = prefs.getCharPref("popupstyle");
     // reset style
-    textbox.setAttribute("autocompletepopup", "PopupAutoCompleteRichResult");
+    urlbar.setAttribute("autocompletepopup", "PopupAutoCompleteRichResult");
     O._rlPopup.setAttribute("class", rlcls);
     // apply style
     switch(popupStyle) {
       case "SIMPLE":
-        textbox.setAttribute("autocompletepopup", "PopupAutoComplete");
+        urlbar.setAttribute("autocompletepopup", "PopupAutoComplete");
         break;
       case "RICHSLIM":
         O._rlPopup.setAttribute("class", rlcls_slim);
