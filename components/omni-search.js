@@ -192,12 +192,23 @@ DetailedOmnibarSearch.prototype = {
       listener.onSearchResult(this, result);
       return;
     } else if(self._suggestEnabled && (prefs.getBoolPref('enabledefaultsearch') || query[3] || query[4])) {
+      var restoreEngine = null, engines = query[1] || [];
+      engines.some(function(engine) {
+        if (engine.supportsResponseType('application/x-suggestions+json')) {
+          restoreEngine = utils._ss.currentEngine;
+          utils._ss.currentEngine = engine;
+          return true;
+        }
+      });
       self._autoComplete.startSearch(query[0] || searchString, searchParam,
                                      null, new SearchObserver({
                                       onSearchResult: function(search, result) {
                                         self.onSuggestedResult(search, result);
                                       }
                                     }));
+      if (restoreEngine) {
+        utils._ss.currentEngine = restoreEngine;
+      }
     } else {
       this.sendCancelledSearchResult(listener, result);
     }
