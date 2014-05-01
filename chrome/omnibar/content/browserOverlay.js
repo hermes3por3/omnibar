@@ -11,14 +11,6 @@ error = function(o) Cu.reportError(o+'');
 
 var emptyFn = function(){}
 
-function checkHostname(hostName, callbackIfExists) {
-  DNSSVC.asyncResolve(hostName, 0, {
-    onLookupComplete: function (request, record, status) {
-      log("dns query resolved?" + status);
-    }
-  }, mainThread);
-}
-
 var O = window.Omnibar = {
   _imageElBox: null,
   _imageEl: null,
@@ -106,51 +98,57 @@ var O = window.Omnibar = {
 
     O.intercepted_handleCommand = gURLBar.handleCommand;
     var src_handleCommand = gURLBar.handleCommand.toString();
-    src_handleCommand = src_handleCommand.replace('{', '{ if(Omnibar.handleSearchQuery(this.value, aTriggeringEvent)) {return;}');
+    src_handleCommand = src_handleCommand.replace('{', '{ if(Omnibar.handleSearchQuery(this.value, aTriggeringEvent, true)) {return;}');
     eval('gURLBar.handleCommand = ' + src_handleCommand);
   
     // Need overrides for browser search to work even after search bar is hidden
     var BS = window.BrowserSearch;
     if(BS && BS.addEngine) {
       BS.addEngine_backup = BS.addEngine||emptyFn;
-      BS.addEngine = function(engine, targetDoc) {
-            var browser = gBrowser.getBrowserForDocument(targetDoc);
-            // ignore search engines from subframes (see bug 479408)
-            if (!browser)
-              return;
-        
-            // Check to see whether we've already added an engine with this title
-            if (browser.engines) {
-              if (browser.engines.some(function (e) e.title == engine.title))
-                return;
-            }
-        
-            // Append the URI and an appropriate title to the browser data.
-            // Use documentURIObject in the check for shouldLoadFavIcon so that we
-            // do the right thing with about:-style error pages.  Bug 453442
-            var iconURL = null;
-            if (gBrowser.shouldLoadFavIcon(targetDoc.documentURIObject))
-              iconURL = targetDoc.documentURIObject.prePath + "/favicon.ico";
-        
-            var hidden = false;
-            // If this engine (identified by title) is already in the list, add it
-            // to the list of hidden engines rather than to the main list.
-            // XXX This will need to be changed when engines are identified by URL;
-            // see bug 335102.
-            var searchService = Cc["@mozilla.org/browser/search-service;1"].
-                                getService(Ci.nsIBrowserSearchService);
-            if (searchService.getEngineByName(engine.title))
-              hidden = true;
-        
-            var engines = (hidden ? browser.hiddenEngines : browser.engines) || [];
-        
-            engines.push({ uri: engine.href,
-                           title: engine.title,
-                           icon: iconURL });
+      BS.addEngine = function(browser, engine, uri) {
+        // XXX Supporting older (<30) convention, when called with 2 args.
+        if(arguments.length == 2) {
+          var targetDoc = engine;
+          uri = targetDoc.documentURIObject;
+          engine = browser;
+          browser = gBrowser.getBrowserForDocument(targetDoc);
+        }
+        // ignore search engines from subframes (see bug 479408)
+        if (!browser)
+          return;
+    
+        // Check to see whether we've already added an engine with this title
+        if (browser.engines) {
+          if (browser.engines.some(function (e) e.title == engine.title))
+            return;
+        }
+    
+        // Append the URI and an appropriate title to the browser data.
+        // Use documentURIObject in the check for shouldLoadFavIcon so that we
+        // do the right thing with about:-style error pages.  Bug 453442
+        var iconURL = null;
+        if (gBrowser.shouldLoadFavIcon(uri))
+          iconURL = uri.prePath + "/favicon.ico";
+    
+        var hidden = false;
+        // If this engine (identified by title) is already in the list, add it
+        // to the list of hidden engines rather than to the main list.
+        // XXX This will need to be changed when engines are identified by URL;
+        // see bug 335102.
+        var searchService = Cc["@mozilla.org/browser/search-service;1"].
+                            getService(Ci.nsIBrowserSearchService);
+        if (searchService.getEngineByName(engine.title))
+          hidden = true;
+    
+        var engines = (hidden ? browser.hiddenEngines : browser.engines) || [];
+    
+        engines.push({ uri: engine.href,
+                       title: engine.title,
+                       icon: iconURL });
 
-        if (hidden)
+        if (hidden) {
           browser.hiddenEngines = engines;
-        else {
+        } else {
           browser.engines = engines;
         }
       }
@@ -420,12 +418,12 @@ var O = window.Omnibar = {
       }
     }
     if(!O.handleSearchQuery(O._urlbar.value, event)) {
-    // no search was performed. go ahead with default handling
+      // no search was performed. go ahead with default handling
       O.handleOriginalUrlbarCommand(event);
     }
   },
-  handleSearchQuery: function(url, event) {
-    //log("handleSearchQuery: "+url+":"+event);
+  handleSearchQuery: function(url, event, intercepted) {
+    //console.log("handleSearchQuery: ", url, event, intercepted);
 
     if(event instanceof KeyEvent) {
       if(event.ctrlKey || event.shiftKey || event.metaKey) {
@@ -597,7 +595,7 @@ var O = window.Omnibar = {
       var type = Ci.nsISearchEngine.DATA_XML;
       O._ss.addEngine(item.getAttribute("uri"), type,
                          item.getAttribute("src"), false);
-    gBrowser.mCurrentBrowser.engines = [];
+      gBrowser.mCurrentBrowser.engines = [];
     } else if(cls.indexOf("engine-menuitem") >= 0) {
       if(item.engine) {
         O._ss.currentEngine = item.engine;
