@@ -214,7 +214,11 @@ var O = window.Omnibar = {
       O.OSE.init();
     }
     
-    O.applyPrefs();
+    if(O._ss.init) {
+      O._ss.init(O.applyPrefs);
+    } else {
+      O.applyPrefs();
+    }
   },
   OSE: {
     init: function() {
