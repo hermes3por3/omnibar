@@ -40,102 +40,8 @@ OmnibarSearch.prototype = {
     return result;
   },
   startSearch: function(searchString, searchParam, previousResult, listener) {
-    searchString = trim(searchString);
-    var utils = new SearchUtils();
-    var pref = utils._prefBranch;
-    // create a simple result object
-    var result = this.createNewResult(searchString);
-    var kwdInfo = utils.getKeywordInfo(searchString.split(' ')[0]);
-    if(kwdInfo) {
-      result.appendMatch(searchString,
-                 kwdInfo.title + " (keyword: " + kwdInfo.keyword + ")",
-                 kwdInfo.iconURL,
-                 "bookmark");
-      listener.onSearchResult(this, result);
-      return;
-    }
-    
-    var showdefaultsearch = false;  //pref.getBoolPref("showdefaultsearch");
-    var enabledefaultsearch = pref.getBoolPref("enabledefaultsearch");
-    var query = utils.parseQuery(searchString);
-    if(searchString.length > 0
-       && (showdefaultsearch ||
-           // show default search option for query containing @ operator
-           (searchString.indexOf("@") >=0 && query[1] && query[1].length > 0) ||
-           // and for query starting with search engine keyword
-           query[3])) {
-      var engines = query[1];
-      // no engine option was found
-      if(!enabledefaultsearch
-         && !(engines && engines.length > 0)
-         && !utils.isAProtocolOrLocation(searchString)
-        ) {
-        // as if user had typed in a valid query with default engine name
-        var e = utils._ss.currentEngine;
-        query[0] = searchString;
-        searchString = pref.getCharPref("defaultqueryformat")
-                           .replace("$Q$", searchString).replace("$E$", e.name);
-        engines = [e];
-      }
-      
-      if(engines && engines.length > 0) {
-        // show default option only if found an engine to search with
-        var engineNames = [];
-        engines.forEach(function(e) {
-          engineNames.push(e.name);
-        });
-        // XXX when "browser.urlbar.autoFill" is true and this is the first
-        // result cursor in textbox with autocomplete goes to the begining after
-        // the a space is entered. A workaround is available... it would be to
-        // add " " to the searchString, but its better to log a bug for this
-        // issue.
-        if(utils._mainPref.getBoolPref("browser.urlbar.autoFill")) {
-          // XXX this is a temporary workaround for the above mentioned bug.
-          // check in next version and remove if its fixed.
-          // here we have added an empty space in search suggestion so that even
-          // if its the first choice in location-bar autocomplete it wont
-          // trigger the buggy behavior.
-          searchString = searchString + "";
-        }
-        var currQry = this.getQueryForEngine(searchString,
-                                             query[0],
-                                             engineNames.join(", "),
-                                             engines.length === 1 ? engines[0].iconURI.spec : undefined);
-        // call append match method to add a search result to urlbar autocomplete.
-        //
-        // result.appendMatch  takes the following arguments:
-        //    1. the actual string to be used in the urlbar.
-        //    2. comment to be shown for the string in the urlbar.
-        //    3. path to the image to be shown besides the comment.
-        //    4. some style. dont remember what's it used for... :|
-        result.appendMatch.apply(result, currQry);
-      }
-    }
-    listener.onSearchResult(this, result);
-  },
-  getQueryForEngine: function(query, searchString, engineName, icon) {
-    if(trim(searchString).length == 0) {
-      searchString = this._sb ?
-                      this._sb.GetStringFromName("EmptyStringFiller") : "___";
-    }
-    // XXX cache these string bundles
-    var comment = "";
-    try{
-    comment = this._sb ? this._sb.GetStringFromName("DefaultSearchCommentFormat") :
-                            "search $1 for: $2"
-    }catch(e) {
-      // failing for swedish locale check to see if there's a problem with file 
-      comment = "$1: $2"
-    }
-    return [
-            query,
-            comment.replace("$1", engineName).replace("$2", searchString),
-            icon || "chrome://omnibar/skin/classic/magnifier.png",
-            "omnibar-search"
-           ];
   },
   stopSearch: function() {
-    // for now nothing to do. everything is synchronous
   }
 }
 
@@ -159,39 +65,28 @@ DetailedOmnibarSearch.prototype = {
                                 .createInstance(Ci.nsIAutoCompleteSearch);
     this._utils = new SearchUtils();
   },
-  boot: function() {
-    // do any init here if required.
+  isSuggestEnabled: function() {
     var prefBranch = Cc["@mozilla.org/preferences-service;1"]
                         .getService(Ci.nsIPrefBranch);
-    var utils = this._utils;
-    var engine = utils._ss.currentEngine;
-    this._suggestEnabled = prefBranch.getBoolPref("browser.search.suggest.enabled") && engine.supportsResponseType("application/x-suggestions+json");
-    this._mainPref = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+    var engine = this._utils._ss.currentEngine;
+    return prefBranch.getBoolPref("browser.search.suggest.enabled") && engine.supportsResponseType("application/x-suggestions+json");
   },
   startSearch: function(searchString, searchParam, previousResult, listener) {
-    // before going ahead stop old searches if there are any...
-    this.stopSearch();
+    //log('startSearch', searchString);
     var self = this;
-    self.boot();
     this._listener = listener;
     this._searchString = searchString;
     var utils = this._utils;
-    var query = self._query = utils.parseQuery(searchString);
-    var result = this._result = this.createNewResult(searchString);
+    var query = this._query = utils.parseQuery(searchString);
     // load the preference baranch. will use it for a bunch of operations.
     var prefs = utils._prefBranch;
     var kwdInfo = utils.getKeywordInfo(searchString.split(' ')[0]);
-    var fileCompletions = [];//getFileCompletions(searchString);
-    if(fileCompletions.length > 0) {
-      fileCompletions.forEach(function(f) {
-        result.appendMatch(f.path,
-                           f.name,
-                           "chrome://omnibar/skin/classic/local.png",
-                           "omnibar-filepath");
-      });
-      listener.onSearchResult(this, result);
-      return;
-    } else if(self._suggestEnabled && (prefs.getBoolPref('enabledefaultsearch') || query[3] || query[4])) {
+
+    this.stopSearch();
+    this._result = this.createNewResult(searchString);
+
+    if(this.isSuggestEnabled() && 
+        (prefs.getBoolPref('enabledefaultsearch') || query[3] || query[4])) {
       var restoreEngine = null, engines = query[1] || [];
       engines.some(function(engine) {
         if (engine.supportsResponseType('application/x-suggestions+json')) {
@@ -200,7 +95,7 @@ DetailedOmnibarSearch.prototype = {
           return true;
         }
       });
-      self._autoComplete.startSearch(query[0] || searchString, searchParam,
+      this._autoComplete.startSearch(query[0] || searchString, searchParam,
                                      null, new SearchObserver({
                                       onSearchResult: function(search, result) {
                                         self.onSuggestedResult(search, result);
@@ -210,37 +105,36 @@ DetailedOmnibarSearch.prototype = {
         utils._ss.currentEngine = restoreEngine;
       }
     } else {
-      this.sendCancelledSearchResult(listener, result);
+      this.sendCancelledSearchResult(listener);
     }
   },
-  sendCancelledSearchResult: function(listener, result) {
-    try{
-    var self = this;
-    //RESULT_NOMATCH_ONGOING,RESULT_FAILURE,RESULT_NOMATCH,RESULT_SUCCESS_ONGOING
-    Cc["@mozilla.org/thread-manager;1"]
-    .getService(Ci.nsIThreadManager).mainThread.dispatch({
-      run: function() {
-        try{
-        if(self._utils._prefBranch.getCharPref("popupstyle") == 'SIMPLE') {
-          // workarounds for different behavior in different popups :|
-          result.setSearchResult(Ci.nsIAutoCompleteResult.RESULT_NOMATCH);
-        } else {
-          result.setSearchResult(Ci.nsIAutoCompleteResult.RESULT_FAILURE);
+  sendCancelledSearchResult: function(listener) {
+    //log('sendCancelledSearchResult');
+    try {
+      var self = this;
+      //RESULT_NOMATCH_ONGOING,RESULT_FAILURE,RESULT_NOMATCH,RESULT_SUCCESS_ONGOING
+      Cc["@mozilla.org/thread-manager;1"]
+      .getService(Ci.nsIThreadManager).mainThread.dispatch({
+        run: function() {
+          try {
+            self._result.setSearchResult(Ci.nsIAutoCompleteResult.RESULT_NOMATCH);
+            listener.onSearchResult(self, self._result);
+          } catch(e){
+            log(e)
+          }
         }
-        listener.onSearchResult(self, result);
-        }catch(e){log(e)}
-      }
-    }, Ci.nsIThread.DISPATH_NORMAL);
-    }catch(e){log(e)}
+      }, Ci.nsIThread.DISPATH_NORMAL);
+    } catch(e){
+      log(e)
+    }
   },
   stopSearch: function() {
     this._autoComplete.stopSearch();
   },
   /**
-   * method called after the suggested search results have been found.
+   * called after the suggested search results have been found.
    */
   onSuggestedResult: function(search, suggested_result) {
-    
     var result = this._result;
     var utils = this._utils;
     var searchString = this._searchString;
@@ -249,66 +143,41 @@ DetailedOmnibarSearch.prototype = {
     var prefs = utils._prefBranch;
     var format = query[2] || prefs.getCharPref("defaultqueryformat");
     var defaultEngines = query[1];
-    var $E$, $Q$;
+    var count = Math.min(prefs.getIntPref("numsuggestions"),
+                         suggested_result ? suggested_result.matchCount : 0);
     if(!(defaultEngines && defaultEngines.length > 0)) {
       defaultEngines = [utils._ss.currentEngine];
     }
-    // temporary variable used at places to get engine names from engines list.
-    var engine_names = [];
-    defaultEngines.forEach(function(e) {
-      engine_names.push(e.name);
-    });
-    $E$ = engine_names.join(",");
-    var MAX_COUNT = prefs.getIntPref("numsuggestions");
-    // for some reason suggested_result is null in a few cases!
-    var count = Math.min(MAX_COUNT,
-                         suggested_result ? suggested_result.matchCount : 0);
-    var old_$Q$;
-    var iconURI = defaultEngines.length === 1 ?
-                  defaultEngines[0].iconURI.spec :
-                  // TODO replace with an icon that shows that its a suggestion
-                  "chrome://omnibar/skin/classic/magnifier.png";
-    //var results = [], comments = [], styles = [], images = [];
+
+    var
+    $E$ = defaultEngines.map(function(e) { return e.name }).join(","),
+    $Q$,
+    iconURI = defaultEngines.length === 1 ?
+                defaultEngines[0].iconURI.spec :
+                "chrome://omnibar/skin/classic/magnifier.png";
+
     for(var i = 0; i < count; i++) {
       //    1. the actual string to be used in the urlbar.
       //    2. comment to be shown for the string in the urlbar.
       //    3. path to the image to be shown besides the comment.
-      //    4. some style. dont remember what's it used for... :|
+      //    4. item's style
       $Q$ = suggested_result.getValueAt(i);
-      // TODO verify the correctness of this logic
-      var possible_url = $Q$.replace(/^http(s)\s/, "http://")
-                            .replace(/\s/g, ".");
-      // XXX for addresses starting with "http ", it should be replaced with
-      // "http://"
-      if(($Q$.indexOf("www") === 0 || $Q$.indexOf("http") === 0) && utils.isAProtocolOrLocation(possible_url)) {
-        $Q$ = possible_url;
+      var comment;
+      if(utils.isAProtocolOrLocation($Q$)) {
+        result.appendMatch($Q$,
+                           $Q$,
+                           utils.getIconSpec($Q$),
+                           "omnibar-suggestion-url");
+      } else {
+        comment = this._sb ? this._sb.GetStringFromName("PhraseSuggestCommentFormat") :
+                             "search $1 for $2"
+        result.appendMatch(trim(format.replace("$Q$", $Q$).replace("$E$", $E$)),
+                           comment.replace("$1", $E$).replace("$2", $Q$),
+                           iconURI,
+                           "omnibar-suggestion-phrase");
       }
-      if( $Q$ !== old_$Q$) {
-        var comment;
-        if(utils.isAProtocolOrLocation($Q$)) {
-          // TODO cache these string bundles
-          comment = this._sb ? this._sb.GetStringFromName("UrlSuggestCommentFormat") :
-                               "suggested url: $1"
-          result.appendMatch($Q$,
-                             comment.replace("$1", $Q$),
-                             utils.getIconSpec($Q$),
-                             "omnibar-suggestion-url");
-        } else {
-          comment = this._sb ? this._sb.GetStringFromName("PhraseSuggestCommentFormat") :
-                               "search $1 for suggestion: $2"
-          result.appendMatch(trim(format.replace("$Q$", $Q$).replace("$E$", $E$)),
-                             comment.replace("$1", $E$).replace("$2", $Q$),
-                             iconURI,
-                             "omnibar-suggestion-phrase");
-        }
-      }
-      old_$Q$ = $Q$;
     }
-    
-    // now append other results...
-    var $Q$ = query[0] || searchString;
-    var engineseparator = prefs.getCharPref("engineseparator");
-    
+
     listener.onSearchResult(this, result);
   }
 }
@@ -365,6 +234,7 @@ OmnibarAllInOne.prototype = {
   omnibarSearchOn: false,
   searchTimer: 0,
   startSearch: function(searchString, searchParam, previousResult, listener) {
+    //log('startSearch', searchString, searchParam, previousResult && previousResult.matchCount);
     var utils = this.utils;
     var me = this;
     this.listener = listener;
@@ -442,7 +312,7 @@ OmnibarAllInOne.prototype = {
   }
 }
 
-var MAX = 20;
+var MAX = 40;
 var OMNIBAR = 'O', HISTORY = 'H';
 const DISTRIBUTION = {
   "OMNIBAR": [[OMNIBAR, MAX]],
@@ -670,10 +540,8 @@ CompositeAutoCompleteResult.prototype = {
     var res = this.compositeResult[index];
     if(res[4] == HISTORY) {
       this.historyResult.removeValueAt(res[5], removeFromDb);
-    } else {
-      this.omnibarResult.removeValueAt(res[5], removeFromDb);
+      this.compositeResult.splice(index, 1);
     }
-    this.compositeResult.splice(index, 1);
   },
   QueryInterface: function(aIID) {
     if (!aIID.equals(Ci.nsIAutoCompleteResult) && !aIID.equals(Ci.nsISupports))
@@ -983,190 +851,6 @@ function trim(str) {
   return str ? str.trim() : '';
 }
 
-var FILE_SEP = '/';  //Default value.
-
-// XXX how do we determine the operating system. we want to set the file
-// separator. maybe that the file object has the required property
-// get profile directory
-(function() {
-  try {
-    var file = Cc["@mozilla.org/file/local;1"]
-                  .createInstance(Ci.nsILocalFile);
-    file.initWithPath("c:\\");  //do all windows have a c-drive?
-  if(file.exists()) {
-    FILE_SEP = "\\";
-  }
-  }catch(e){
-    //log(e);
-  }
-})();
-
-var File = function(x) {
-  if(typeof x === "string") {
-    var path = x;
-    // best possible sub stitution?
-    var file = Cc["@mozilla.org/file/local;1"]
-                  .createInstance(Ci.nsILocalFile);
-    file.initWithPath(path);
-    // save the file handle for future reference.
-    x = file;
-  }
-  this.handle = x;
-  var path = this.path = x.path;
-  this.name = path.substring(path.lastIndexOf(FILE_SEP) + 1);
-}
-
-/**
- * Object corresponding to an actual file.
- */
-File.prototype = {
-  exists: function() {
-    return this.handle.exists();
-  },
-  /**
-   * returns true if file is a file and not a directory.
-   */
-  isFile: function() {
-    return this.handle.isFile();
-  },
-  /**
-   * returns true if file is a directory
-   */
-  isDir: function() {
-    return this.handle.isDirectory();
-  },
-  /**
-   * returns a list of files available in the current folder.
-   * @param filter {string} a simple wildcard filter or a function
-   */
-  getFiles: function(filter) {
-    filter = (typeof filter === "function") ? filter : getWidlcardFilter(filter);
-    var arrey = [];
-    try {
-      var entries = this.handle.directoryEntries;
-      while(entries && entries.hasMoreElements()) {
-        var entry = entries.getNext();
-        
-        // can we get the name from entry?
-        var file = entry.QueryInterface(Ci.nsIFile);
-        var path = file.path;
-        var name = path.substring(path.lastIndexOf(FILE_SEP) + 1)
-        if(filter(name)) {
-          arrey.push(new File(file));
-        }
-      }
-    } catch(e) {}
-    return arrey;
-  },
-  /**
-   * appends the name to the file and returns the new file object.
-   */
-  append: function(name) {
-    return this.handle.append(name);
-  },
-  /**
-   * returns the file path representing the file
-   */
-  getPath: function() {
-    return this.handle.path;
-  }
-  // no file I/O is being provided here, its just for the purpose of getting a
-  // list of files in the file system.
-}
-
-function getWidlcardFilter(simple_wildcard) {
-  function any() {
-    return true;
-  }
-  function none() {
-    return false;
-  }
-  function is(aName) {
-    return aName === simple_wildcard;
-  }
-  function prefix(aName) {
-    return aName.indexOf(simple_wildcard) === 0;
-  }
-  // some simple functions for trivial cases
-  if(simple_wildcard === undefined) {
-    return none;
-  }
-  if(simple_wildcard.length === 0) {
-    return any;
-  }
-  if(simple_wildcard.indexOf("*") < 0) {
-    return is;
-  }
-  
-  var parts = simple_wildcard.split("*");
-  var first = parts.shift();
-  var len = parts.length;
-  return function(aName) {
-    var part,
-        idxPart,
-        idxFirst = aName.indexOf(first);
-    if(idxFirst !== 0) {
-      return false;
-    }
-    aName = aName.substring(idxFirst + first.length);
-    for(var i = 0; i < len; i++) {
-      part = parts[i];
-      idxPart = aName.indexOf(part);
-      if(idxPart < 0) {
-        return false;
-      }
-      aName = aName.substring(idxPart + part.length);
-    }
-    return true;
-  }
-}
-
-function getFileCompletions(path, MAX_COUNT) {
-  try {
-    // sanitize path
-    MAX_COUNT = MAX_COUNT || 1000; // any pref?
-    if(path.indexOf("file://") === 0) {
-      path = path.substring("file://".length);
-      // check for windows drive
-      if(path.indexOf(":") === 2 && path.indexOf("/") === 0) {
-        path = path.substring(1);
-      }
-    }
-    path = path.replace(/\//g, FILE_SEP);
-    var lisep = path.lastIndexOf(FILE_SEP);
-    var filter, dirpath;
-    var paths = path.split(FILE_SEP);
-    // get the root file. no filter supported in root name.
-    var rootFile = new File(paths.shift());
-    // take the last path out for preparing final filter
-    var lastPath = paths.pop();
-    
-    var files = [rootFile], t;
-    for(var i = 0; i < paths.length; i++) {
-      var filter = paths[i];
-      t = [];
-      files.forEach(function(f) {
-        if(f.isDir()) {
-          t = t.concat(f.getFiles(filter));
-        }
-      });
-      files = t;
-    }
-    t = [];
-    var lastPathFilter = lastPath + "*";
-    
-    for(var i = 0; i < files.length && t.length < MAX_COUNT; i++) {
-      if(files[i].isDir()) {
-        t = t.concat(files[i].getFiles(lastPathFilter));
-      }
-    }
-    return t;
-  } catch(e) {
-    // ignore
-  }
-  return [];  //t || [];
-}
-
 function setHostNames() {
   var hostnames = PREF_BRANCH.getCharPref('hostnames').split(',');
   var buf = [];
@@ -1177,7 +861,6 @@ function setHostNames() {
         '(:\\d+)*$)');
     }
   });
-  //log(buf.join("|"));
   SearchUtils.prototype.RE_HOST = new RegExp(buf.join('|'), 'ig');
 }
 
