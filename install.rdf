@@ -2,7 +2,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>omnibar@ajitk.com</em:id>
-    <em:version>0.7.21.20140126</em:version>
+    <em:version>0.7.21.20140618</em:version>
     <!-- type of resource -->
     <em:type>2</em:type>
 
