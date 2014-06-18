@@ -1236,7 +1236,6 @@ SearchUtils.prototype = {
       var kwdURI = bms.getURIForKeyword(keyword);
       if (kwdURI) {
         var title = "keyword " + keyword;
-        var iconURL = this.getIconSpec(kwdURI);
         var items = bms.getBookmarkIdsForURI(kwdURI, {});
         for(var i = 0; items.length; i++) {
           if(bms.getKeywordForBookmark(items[i]) == keyword) {
@@ -1248,7 +1247,6 @@ SearchUtils.prototype = {
           keyword: keyword,
           spec: kwdURI.spec,
           title: title,
-          iconURL: iconURL
         };
       }
     } catch(e){}
