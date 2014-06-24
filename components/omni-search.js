@@ -35,7 +35,7 @@ OmnibarSearch.prototype = {
                   .createInstance(Ci.nsIAutoCompleteSimpleResult);
     result.setSearchString(searchString);
     result.setDefaultIndex(-1);
-    result.setErrorDescription("omnibar search failure");
+    //result.setErrorDescription("omnibar search failure");
     result.setSearchResult(Ci.nsIAutoCompleteResult.RESULT_SUCCESS);
     return result;
   },
@@ -288,7 +288,7 @@ OmnibarAllInOne.prototype = {
     // Assuming that search suggestions load later
     this.resultTimeoutId = this.hiddenWindow.setTimeout(onSearchResult, 100);
     function onSearchResult() {
-        self.listener.onSearchResult(self, result);
+        self.listener.onUpdateSearchResult(self, result);
     }
     //log('done onHistoryResult:'+result.searchResult + ':' +result.matchCount)
   },
@@ -296,7 +296,7 @@ OmnibarAllInOne.prototype = {
     //log('onOmnibarResult:'+omnibar_result.searchResult + ':' +omnibar_result.matchCount)
     var result = this.result;
     result.setOmnibarResult(omnibar_result);
-    this.listener.onSearchResult(this, result);
+    this.listener.onUpdateSearchResult(this, result);
     if(this.resultTimeoutId) {
         this.hiddenWindow.clearTimeout(this.resultTimeoutId);
     }
@@ -304,8 +304,8 @@ OmnibarAllInOne.prototype = {
   },
   stopSearch: function() {
     //log('stopSearch');
-    //this.historySearch.stopSearch();
-    //this.omnibarSearch.stopSearch();
+    this.historySearch.stopSearch();
+    this.omnibarSearch.stopSearch();
     if(this.searchTimer) {
       this.hiddenWindow.clearTimeout(this.searchTimer);
     }
