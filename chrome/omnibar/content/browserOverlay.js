@@ -306,21 +306,8 @@ var O = window.Omnibar = {
    * adds options to urlbar for omni-bar autocompletes.
    */
   enableSearchAutocomplete: function() {
-    var
-    urlbar = O._urlbar,
-    autocompletesearch,
-    appInfo = Cc['@mozilla.org/xre/app-info;1'].getService(Ci.nsIXULAppInfo),
-    versionChecker = Cc['@mozilla.org/xpcom/version-comparator;1']
-                       .getService(Ci.nsIVersionComparator);
-    if(versionChecker.compare(appInfo.version, "31.0") >= 0) {
-      // FIXME Workaround for clicks not working in autocomplete popup for 31+.
-      // Fallback to simpler form of (history + search suggestions) until a 
-      // solution is found. Revert to old behavior when Firefox fixes it or
-      // another workaround is found.
-      autocompletesearch = O._defaultAutocompletesearch + " omnibar-search-suggestions";
-    } else {
-      autocompletesearch = O._defaultAutocompletesearch.replace("history", "") + " omnibar-allinone";
-    }
+    var urlbar = O._urlbar;
+    var autocompletesearch = O._defaultAutocompletesearch.replace("history", "") + " omnibar-allinone";
     urlbar.setAttribute('autocompletesearch', autocompletesearch);
   },
   get engines() {

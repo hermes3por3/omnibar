@@ -288,7 +288,7 @@ OmnibarAllInOne.prototype = {
     // Assuming that search suggestions load later
     this.resultTimeoutId = this.hiddenWindow.setTimeout(onSearchResult, 100);
     function onSearchResult() {
-        self.listener.onUpdateSearchResult(self, result);
+        self.listener.onSearchResult(self, result);
     }
     //log('done onHistoryResult:'+result.searchResult + ':' +result.matchCount)
   },
@@ -296,7 +296,7 @@ OmnibarAllInOne.prototype = {
     //log('onOmnibarResult:'+omnibar_result.searchResult + ':' +omnibar_result.matchCount)
     var result = this.result;
     result.setOmnibarResult(omnibar_result);
-    this.listener.onUpdateSearchResult(this, result);
+    this.listener.onSearchResult(this, result);
     if(this.resultTimeoutId) {
         this.hiddenWindow.clearTimeout(this.resultTimeoutId);
     }
@@ -304,8 +304,8 @@ OmnibarAllInOne.prototype = {
   },
   stopSearch: function() {
     //log('stopSearch');
-    this.historySearch.stopSearch();
-    this.omnibarSearch.stopSearch();
+    //this.historySearch.stopSearch();
+    //this.omnibarSearch.stopSearch();
     if(this.searchTimer) {
       this.hiddenWindow.clearTimeout(this.searchTimer);
     }
@@ -341,58 +341,6 @@ function setHistoryCount(aSubject, aTopic, aData){
 
 }
 
-// Implements nsIAutoCompleteResult
-function SimpleAutoCompleteResult(searchString, searchResult,
-                                  defaultIndex, errorDescription,
-                                  results, comments, styles, images) {
-  this.searchString = searchString;
-  this.searchResult = searchResult;
-  this.defaultIndex = defaultIndex;
-  this.errorDescription = errorDescription;
-  this.results = results;
-  this.comments = comments;
-  this.styles = styles;
-  this.images = images;
-}
-
-SimpleAutoCompleteResult.prototype = {
-  searchString: "",
-  searchResult: 0,
-  defaultIndex: 0,
-  errorDescription: "",
-  results: [],
-  comments: [],
-  styles: [],
-  images: [],
-
-  get matchCount() {
-    return this.results.length;
-  },
-  getValueAt: function(index) {
-    return this.results[index];
-  },
-  getCommentAt: function(index) {
-    return this.comments[index];
-  },
-  getStyleAt: function(index) {
-    return this.styles[index];
-  },
-  getImageAt : function (index) {
-    return this.images[index];
-  },
-  removeValueAt: function(index, removeFromDb) {
-    this.results.splice(index, 1);
-    this.comments.splice(index, 1);
-    this.styles.splice(index, 1);
-    this.images.splice(index, 1);
-  },
-  QueryInterface: function(aIID) {
-    if (!aIID.equals(Ci.nsIAutoCompleteResult) && !aIID.equals(Ci.nsISupports))
-        throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
-};
-
 // nsIAutoCompleteResult
 function CompositeAutoCompleteResult(searchString, strategy) {
   this.searchString = searchString;
@@ -408,12 +356,12 @@ CompositeAutoCompleteResult.prototype = {
     var matchCount = this._matchCount;
     if(this.omnibarSearchOn && (!omnibarResult ||
        omnibarResult.searchResult == ACR.RESULT_SUCCESS_ONGOING)) {
-      if(this.matchCount == 0) return ACR.RESULT_NOMATCH_ONGOING;
+      if(matchCount == 0) return ACR.RESULT_NOMATCH_ONGOING;
       else return ACR.RESULT_SUCCESS_ONGOING;
     }
     if(this.historySearchOn && (!historyResult ||
        historyResult.searchResult == ACR.RESULT_SUCCESS_ONGOING)) {
-      if(this.matchCount == 0) return ACR.RESULT_NOMATCH_ONGOING;
+      if(matchCount == 0) return ACR.RESULT_NOMATCH_ONGOING;
       else return ACR.RESULT_SUCCESS_ONGOING;
     }
     //log("return ACR.RESULT_SUCCESS");
@@ -519,6 +467,12 @@ CompositeAutoCompleteResult.prototype = {
   },
   get matchCount() {
     return this._matchCount;
+  },
+  get typeAheadResult() {
+    return false;
+  },
+  getFinalCompleteValueAt: function(index) {
+    return this.compositeResult[index][0];
   },
   getValueAt: function(index) {
     return this.compositeResult[index][0];
