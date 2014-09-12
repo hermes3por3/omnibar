@@ -540,7 +540,7 @@ var O = window.Omnibar = {
         menuitem.setAttribute("label", name);
         menuitem.setAttribute("acceltext", engines[i].alias||'');
         menuitem.setAttribute("id", 'omnibar-'+name);
-        menuitem.setAttribute("class", "menuitem-iconic omnibar-engine-menuitem");
+        menuitem.setAttribute("class", "menuitem-iconic omnibar-engine-menuitem menuitem-with-favicon");
         if (engines[i] == currentEngine) {
           menuitem.setAttribute("selected", "true");
         }
