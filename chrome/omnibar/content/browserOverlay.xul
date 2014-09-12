@@ -20,12 +20,12 @@
   </commandset>
   <textbox id="urlbar">
     <hbox id="omnibar-in-urlbar"
+          align="center"
           insertbefore="urlbar-icons"
           onclick="Omnibar.onButtonClick(event);"
           context="omnibar-context-popup">
-      <label id="omnibar-defaultEngineName" align="center"
-             />
-      <vbox id="omnibar-defaultEngineBox" align="center" pack="center">
+      <label id="omnibar-defaultEngineName"/>
+      <vbox id="omnibar-defaultEngineBox">
         <image id="omnibar-defaultEngine"/>
       </vbox>
     </hbox>
