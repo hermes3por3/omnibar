@@ -7,9 +7,10 @@ kXULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
 DNSSVC = Cc["@mozilla.org/network/dns-service;1"].getService(Ci.nsIDNSService),
 mainThread = Cc["@mozilla.org/thread-manager;1"].getService().mainThread,
 log = function(o) Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService).logStringMessage(o+''),
-error = function(o) Cu.reportError(o+'');
+error = function(o) Cu.reportError(o+''),
+emptyFn = function(){};
 
-var emptyFn = function(){}
+Cu.import('resource://gre/modules/AddonManager.jsm');
 
 var O = window.Omnibar = {
   _imageElBox: null,
@@ -41,14 +42,24 @@ var O = window.Omnibar = {
                 "chrome://omnibar/locale/strings.properties",
                 localeService.getApplicationLocale());
 
+    // Update version
+    AddonManager.getAddonByID('omnibar@ajitk.com', function(addon) {
+      if(addon.version != O._prefs.getCharPref('version')) {
+        O._prefs.setCharPref('version', addon.version);
+        // Show change log
+        setTimeout(function() {
+          gBrowser.selectedTab = gBrowser.addTab('chrome://omnibar/content/changelog.html');
+        }, 2000);
+      }
+    });
+
     // do other init related stuff
     if(!(O._defaultAutocompletesearch)) {
       O._defaultAutocompletesearch = urlbar.getAttribute('autocompletesearch');
     }
 	
-	// set version as an attribute for version spefic rules
-	document.getElementById("omnibar-in-urlbar").setAttribute('class', 'v'+Application.version.split('.')[0]);
-
+    // set version as an attribute for version spefic rules
+    document.getElementById("omnibar-in-urlbar").setAttribute('class', 'v'+Application.version.split('.')[0]);
     
     urlbar.addEventListener("keydown", function(e) {
       if(e.ctrlKey) {
@@ -65,13 +76,14 @@ var O = window.Omnibar = {
             break;
         }
       }
-    }, false)
+    }, false);
+
     urlbar.addEventListener("DOMMouseScroll", function(e) {
       if(e.ctrlKey) {
         O.changeEngine(e.detail > 0 ? 1 : -1);
         e.preventDefault();
       }
-    }, false)
+    }, false);
     O._originalOnTextEnetered = O._urlbar.getAttribute("ontextentered");
 
     // add itself as an observer
