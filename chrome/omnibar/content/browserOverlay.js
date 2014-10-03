@@ -371,8 +371,8 @@ var O = window.Omnibar = {
     setTimeout(O.setEngineIcon, 100);
     O.enableSearchAutocomplete();
     urlbar.setAttribute("maxrows", prefs.getIntPref("numresults")+"");
-    prefSvc.setIntPref("browser.urlbar.maxRichResults",
-                       Math.max(prefs.getIntPref('numresults'), prefSvc.getIntPref('browser.urlbar.maxRichResults')));
+    prefSvc.getBranch(null).setIntPref("browser.urlbar.maxRichResults",
+                       Math.max(prefs.getIntPref('numresults'), prefSvc.getBranch(null).getIntPref('browser.urlbar.maxRichResults')));
 
 
     var rlcls = O._rlPopup.getAttribute("class"),

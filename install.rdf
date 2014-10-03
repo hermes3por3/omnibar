@@ -2,7 +2,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>omnibar@ajitk.com</em:id>
-    <em:version>0.7.24.20140624</em:version>
+    <em:version>0.7.26.20141003</em:version>
     <!-- type of resource -->
     <em:type>2</em:type>
 
@@ -87,6 +87,7 @@
     <em:developer>Ajit (aka ajitk)</em:developer>
     <em:contributor>Amit - Original Idea(s) and reviews</em:contributor>
     <em:contributor>All user who have given contructive feedbacks</em:contributor>
+    <em:contributor>Alexander Seleznev</em:contributor>
     <em:optionsURL>chrome://omnibar/content/options.xul</em:optionsURL>
     <em:iconURL>chrome://omnibar/skin/classic/magnifier_20.png</em:iconURL>
     
