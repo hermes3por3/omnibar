@@ -1146,15 +1146,21 @@ SearchUtils.prototype = {
   RE_LIKE_IPV6_ADDR: /^\[\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*\](:\d+)*$/,
   RE_MOZ_ACTION: /^moz-action:([^,]+),(.*)$/,
   RE_NUM: /^\d*$/,
+  get engines() {
+    if(!this._engines) {
+      var engines = this._engines = [];
+      ss.getEngines({}, []).forEach(function(e) {
+        if(e.hidden !== true) {
+          engines.push(e);
+        }
+      });
+    }
+    return this._engines;
+  },
   init: function() {
     var ss = this._ss = Cc['@mozilla.org/browser/search-service;1']
                 .getService(Ci.nsIBrowserSearchService);
-    var engines = this._engines = [];
-    ss.getEngines({}, []).forEach(function(e) {
-      if(e.hidden !== true) {
-        engines.push(e);
-      }
-    });
+
     this._prefBranch = Cc["@mozilla.org/preferences-service;1"]
                         .getService(Ci.nsIPrefService)
                         .getBranch("extensions.omnibar.");
@@ -1164,9 +1170,6 @@ SearchUtils.prototype = {
                       getService(Ci.nsINavBookmarksService);
     this._faviconService = Cc["@mozilla.org/browser/favicon-service;1"]
                          .getService(Ci.nsIFaviconService);
-  },
-  getAllEngines: function() {
-    return this._engines;
   },
   getIconSpec: function(uri){
     try {
@@ -1395,7 +1398,7 @@ SearchUtils.prototype = {
    */
   findEngines: function (nameHints) {
     var filteredEngines = [];
-    var allEngines = this._engines;
+    var allEngines = this.engines;
     var self = this;
     nameHints.forEach(function(hint) {
       hint = trim(hint).toLowerCase();

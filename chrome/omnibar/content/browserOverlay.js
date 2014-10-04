@@ -29,6 +29,7 @@ var O = window.Omnibar = {
     O._prefSvc = Cc["@mozilla.org/preferences-service;1"]
                     .getService(Ci.nsIPrefService);
     
+    O._prefsRoot = O._prefSvc.getBranch(null);
     O._prefs = O._prefSvc.getBranch("extensions.omnibar.");
     O._prefs.QueryInterface(Ci.nsIPrefBranch2).addObserver("", O, false);
     O._ss = Cc['@mozilla.org/browser/search-service;1']
@@ -372,7 +373,7 @@ var O = window.Omnibar = {
     document.getElementById("omnibar-defaultEngineName").value = engine.name;
   },
   applyPrefs: function() {
-    var prefSvc = O._prefSvc;
+    var prefsRoot = O._prefsRoot;
     var prefs = O._prefs;
     var urlbar = O._urlbar;
 
@@ -383,8 +384,8 @@ var O = window.Omnibar = {
     setTimeout(O.setEngineIcon, 100);
     O.enableSearchAutocomplete();
     urlbar.setAttribute("maxrows", prefs.getIntPref("numresults")+"");
-    prefSvc.getBranch(null).setIntPref("browser.urlbar.maxRichResults",
-                       Math.max(prefs.getIntPref('numresults'), prefSvc.getBranch(null).getIntPref('browser.urlbar.maxRichResults')));
+    prefsRoot.setIntPref("browser.urlbar.maxRichResults",
+                       Math.max(prefs.getIntPref('numresults'), prefsRoot.getIntPref('browser.urlbar.maxRichResults')));
 
 
     var rlcls = O._rlPopup.getAttribute("class"),
@@ -461,7 +462,7 @@ var O = window.Omnibar = {
         
         // check where to open the first tab
         var openintab = (event && event.altKey);
-        if(!openintab && O._prefSvc.getBoolPref("browser.search.openintab")) {
+        if(!openintab && O._prefsRoot.getBoolPref("browser.search.openintab")) {
           var currentBrowser = gBrowser.getBrowserForTab(gBrowser.selectedTab);
           openintab = currentBrowser.currentURI.spec != "about:blank";
         }
@@ -496,9 +497,7 @@ var O = window.Omnibar = {
                      submission.postData);
         });
         if(ngins.length >= 1) {
-          var prefSvc = Cc["@mozilla.org/preferences-service;1"].
-                        getService(Ci.nsIPrefService);
-          var branch = prefSvc.getBranch("extensions.omnibar.");
+          var branch = O._prefs.getBranch("extensions.omnibar.");
           var names = firstEngine.name;
           ngins.forEach(function(n){
             names += "," + n.name
@@ -530,7 +529,7 @@ var O = window.Omnibar = {
   onContextPopupShowing: function(event) {try{
     var popup = document.getElementById("omnibar-engine-menu");
     document.getElementById("omnibar-context-menuitem-suggestenabled")
-    .setAttribute("checked", O._prefSvc.getBoolPref("browser.search.suggest.enabled"));
+    .setAttribute("checked", O._prefsRoot.getBoolPref("browser.search.suggest.enabled"));
     
     
     if('organizeSE' in window) {
