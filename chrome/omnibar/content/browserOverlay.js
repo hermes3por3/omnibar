@@ -109,10 +109,12 @@ var O = window.Omnibar = {
       };
     }
 
-    O.intercepted_handleCommand = gURLBar.handleCommand;
-    var src_handleCommand = gURLBar.handleCommand.toString();
-    src_handleCommand = src_handleCommand.replace('{', '{ if(Omnibar.handleSearchQuery(this.value, aTriggeringEvent, true)) {return;}');
-    eval('gURLBar.handleCommand = ' + src_handleCommand);
+    gURLBar.intercepted_handleCommand = gURLBar.handleCommand;
+    gURLBar.handleCommand = function(event) {
+      if(!O.handleSearchQuery(this.value, event, true)) {
+        gURLBar.intercepted_handleCommand(event);
+      }
+    };
   
     // Need overrides for browser search to work even after search bar is hidden
     var BS = window.BrowserSearch;
@@ -223,69 +225,10 @@ var O = window.Omnibar = {
       
     }
     
-    if("organizeSE" in window) {
-      O.OSE.init();
-    }
-    
     if(O._ss.init) {
       O._ss.init(O.applyPrefs);
     } else {
       O.applyPrefs();
-    }
-  },
-  OSE: {
-    init: function() {
-      var e = document.getElementById('omnibar-osemenu');
-      e.setAttribute("ref", "urn:organize-search-engines:root");
-      e.setAttribute("datasources", "rdf:organized-internet-search-engines");
-      e.setAttribute("template", "searchbar-template");
-      e.setAttribute("sortDirection", "natural");
-      e.setAttribute("sortResource", "urn:organize-search-engines#Name");
-      e.builder.rebuild();
-      
-      var exts = {};
-      exts.omnibar = {
-        check: true,
-        sortDirectionHandler: function sortDirectionHandler(newVal) {
-          e.setAttribute("sortDirection", newVal);
-        },
-        wait: 0,
-        init: function() {
-          var e = document.getElementById('omnibar-osemenu');
-          e.addEventListener("popupshowing", this.onPopupShowing, true);
-          e.addEventListener("command", this.onCommand, true);
-        },
-        onCommand: function(e) {
-          var target = e.originalTarget, engine;
-          if(organizeSE.hasClass(target, "openintabs-item")) {
-            var folder = target.parentNode.parentNode.id;
-            folder = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService)
-                       .GetResource(folder);
-            O._ss.currentEngine = organizeSE.SEOrganizer.folderToEngine(folder);
-          } else if(target.engine) {
-            O._ss.currentEngine = target.engine;
-          } else if(organizeSE.hasClass(target, "searchbar-engine-menuitem") ||
-                    organizeSE.hasClass(target, "addengine-item")) {
-            O._ss.currentEngine = organizeSE.SEOrganizer.getEngineByName(target.label);
-          }
-        },
-        onPopupHidden: function(e) {
-        },
-        onPopupShowing: function(e) {
-          if(e.target.parentNode == e.currentTarget) {
-            e.target.id = "omnibar-osemenu";
-          } else {
-            organizeSE.removeOpenInTabsItems(e.target);
-            //organizeSE.insertOpenInTabsItems(e.target); // not supported
-          }
-          e.stopPropagation();
-        }
-      };
-      
-      var initStr = organizeSE__Extensions.prototype.init.toString();
-      initStr = initStr.replace(/this\)/,'exts)');
-      eval('var initFn = ' + initStr);
-      initFn();
     }
   },
   webSearch: function() {
@@ -516,7 +459,7 @@ var O = window.Omnibar = {
     if(typeof handleURLBarCommand == "function") {
       handleURLBarCommand(e);
     } else {
-        O.intercepted_handleCommand.call(gURLBar, e);
+      gURLBar.intercepted_handleCommand.call(gURLBar, e);
     }
   },
   onButtonClick: function (event) {

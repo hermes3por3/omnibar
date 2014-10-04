@@ -1149,7 +1149,7 @@ SearchUtils.prototype = {
   get engines() {
     if(!this._engines) {
       var engines = this._engines = [];
-      ss.getEngines({}, []).forEach(function(e) {
+      this._ss.getEngines({}, []).forEach(function(e) {
         if(e.hidden !== true) {
           engines.push(e);
         }
@@ -1158,7 +1158,7 @@ SearchUtils.prototype = {
     return this._engines;
   },
   init: function() {
-    var ss = this._ss = Cc['@mozilla.org/browser/search-service;1']
+    this._ss = this._ss = Cc['@mozilla.org/browser/search-service;1']
                 .getService(Ci.nsIBrowserSearchService);
 
     this._prefBranch = Cc["@mozilla.org/preferences-service;1"]
