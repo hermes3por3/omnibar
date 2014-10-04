@@ -13,7 +13,7 @@
             onunload="Options.done();">
 
   <script type="application/x-javascript" src="options.js" />
-	<stringbundle id="strings" src="chrome://omnibar/locale/strings.properties" />
+	<stringbundle id="omnibar-strings" src="chrome://omnibar/locale/strings.properties" />
 
 	<prefpane id="mainPane" label="" flex="1">
 		<preferences>
